@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideLoading, showLoading } from "../redux/loaderSlice";
 import { getShowById } from "../calls/shows";
 import { useNavigate, useParams } from "react-router-dom";
-import { message, Card, Row, Col, Button } from "antd";
+import { message, Card, Row, Col, Button, Tooltip } from "antd";
 import moment from "moment";
 import { bookShow, makePayment } from "../calls/bookings";
 import StripeCheckout from "react-stripe-checkout";
@@ -63,25 +63,27 @@ const BookShow = () => {
               if (seatNumber <= totalSeats)
                 return (
                   <li key={seatNumber}>
-                    <button
-                      onClick={() => {
-                        if (!show.bookedSeats.includes(seatNumber)) { // Check if the seat is not booked
-                          if (selectedSeats.includes(seatNumber)) {
-                            setSelectedSeats(
-                              selectedSeats.filter(
-                                (curSeatNumber) => curSeatNumber !== seatNumber
-                              )
-                            );
-                          } else {
-                            setSelectedSeats([...selectedSeats, seatNumber]);
+                    <Tooltip title={show.bookedSeats.includes(seatNumber) ? "This seat is already booked" : "Click to book this seat"}>
+
+                      <button
+                        onClick={() => {
+                          if (!show.bookedSeats.includes(seatNumber)) {
+                            if (selectedSeats.includes(seatNumber)) {
+                              setSelectedSeats(
+                                selectedSeats.filter(
+                                  (curSeatNumber) => curSeatNumber !== seatNumber
+                                )
+                              );
+                            } else {
+                              setSelectedSeats([...selectedSeats, seatNumber]);
+                            }
                           }
-                        }
-                      }}
-                      
-                      className={seatClass}
-                    >
-                      {seatNumber}
-                    </button>
+                        }}
+                        className={seatClass}
+                      >
+                        {seatNumber}
+                      </button>
+                    </Tooltip>
                   </li>
                 );
             });
