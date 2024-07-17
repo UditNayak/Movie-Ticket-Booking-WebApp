@@ -21,8 +21,8 @@ function ProtectedRoute({ children }) {
 
   const navItems = [
     {
-      label: "Home",
-      icon: <HomeOutlined />,
+      label: <Link to="/">Home</Link>,
+      icon: <HomeOutlined />, // Assuming you have an icon for Home
     },
 
     {
@@ -32,15 +32,15 @@ function ProtectedRoute({ children }) {
         {
           label: (
             <span
-            onClick={() => {
-              if (user.role === 'admin') {
-                navigate("/admin");
-              } else if (user.role === 'partner') {
-                navigate("/partner");
-              } else {
-                navigate("/profile");
-              }
-            }}
+              onClick={() => {
+                if (user.role === "admin") {
+                  navigate("/admin");
+                } else if (user.role === "partner") {
+                  navigate("/partner");
+                } else {
+                  navigate("/profile");
+                }
+              }}
             >
               My Profile
             </span>
@@ -69,7 +69,7 @@ function ProtectedRoute({ children }) {
     try {
       dispatch(showLoading());
       const response = await GetCurrentUser();
-      console.log(response)
+      console.log(response);
       dispatch(setUser(response.data));
       dispatch(hideLoading());
       // Hide Loader
@@ -102,9 +102,11 @@ function ProtectedRoute({ children }) {
               alignItems: "center",
             }}
           >
-            <h3 className="demo-logo text-white m-0" style={{ color: "white" }}>
-              Book My Show
-            </h3>
+            <Link to="/">
+              <h3 className="demo-logo text-white m-0" style={{ color: "white" }}>
+                Book My Show
+              </h3>
+            </Link>
             <Menu theme="dark" mode="horizontal" items={navItems} />
           </Header>
           <div style={{ padding: 24, minHeight: 380, background: "#fff" }}>
