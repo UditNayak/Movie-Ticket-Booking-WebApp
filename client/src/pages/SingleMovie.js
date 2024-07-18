@@ -15,6 +15,7 @@ const SingleMovie = () => {
   const [theatres, setTheatres] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleDate = (e) => {
     setDate(moment(e.target.value).format("YYYY-MM-DD"));
     navigate(`/movie/${params.id}?date=${e.target.value}`);
@@ -26,7 +27,6 @@ const SingleMovie = () => {
       const response = await getMovieById(params.id);
       if (response.success) {
         setMovie(response.data);
-        console.log(response.data);
       } else {
         message.error(response.message);
       }
@@ -49,7 +49,7 @@ const SingleMovie = () => {
       dispatch(hideLoading());
     } catch (err) {
       dispatch(hideLoading());
-      message.err(err.message);
+      message.error(err.message);
     }
   };
 
@@ -78,8 +78,7 @@ const SingleMovie = () => {
                 Genre: <span>{movie.genre}</span>
               </p>
               <p className="movie-data">
-                Release Date:{" "}
-                <span>{moment(movie.date).format("MMM Do YYYY")}</span>
+                Release Date: <span>{moment(movie.date).format("MMM Do YYYY")}</span>
               </p>
               <p className="movie-data">
                 Duration: <span>{movie.duration} Minutes</span>
@@ -93,6 +92,7 @@ const SingleMovie = () => {
                   type="date"
                   className="max-width-300 mt-8px-mob"
                   value={date}
+                  min={moment().format("YYYY-MM-DD")} // This sets the minimum date to today
                   placeholder="default size"
                   prefix={<CalendarOutlined />}
                 />
@@ -110,42 +110,33 @@ const SingleMovie = () => {
         {theatres.length > 0 && (
           <div className="theatre-wrapper mt-3 pt-3">
             <h2>Theatres</h2>
-            {theatres.map((theatre) => {
-              return (
-                <div key={theatre._id}>
-                  <Row gutter={24} key={theatre._id}>
-                    <Col xs={{ span: 24 }} lg={{ span: 8 }}>
-                      <h3>{theatre.name}</h3>
-                      <p>{theatre.address}</p>
-                    </Col>
-                    <Col xs={{ span: 24 }} lg={{ span: 16 }}>
-                      <ul className="show-ul">
-                        {theatre.shows
-                          .sort(
-                            (a, b) =>
-                              moment(a.time, "HH:mm") - moment(b.time, "HH:mm")
-                          )
-                          .map((singleShow) => {
-                            return (
-                              <li
-                                key={singleShow._id}
-                                onClick={() =>
-                                  navigate(`/book-show/${singleShow._id}`)
-                                }
-                              >
-                                {moment(singleShow.time, "HH:mm").format(
-                                  "hh:mm A"
-                                )}
-                              </li>
-                            );
-                          })}
-                      </ul>
-                    </Col>
-                  </Row>
-                  <Divider />
-                </div>
-              );
-            })}
+            {theatres.map((theatre) => (
+              <div key={theatre._id}>
+                <Row gutter={24} key={theatre._id}>
+                  <Col xs={{ span: 24 }} lg={{ span: 8 }}>
+                    <h3>{theatre.name}</h3>
+                    <p>{theatre.address}</p>
+                  </Col>
+                  <Col xs={{ span: 24 }} lg={{ span: 16 }}>
+                    <ul className="show-ul">
+                      {theatre.shows
+                        .sort(
+                          (a, b) => moment(a.time, "HH:mm") - moment(b.time, "HH:mm")
+                        )
+                        .map((singleShow) => (
+                          <li
+                            key={singleShow._id}
+                            onClick={() => navigate(`/book-show/${singleShow._id}`)}
+                          >
+                            {moment(singleShow.time, "HH:mm").format("hh:mm A")}
+                          </li>
+                        ))}
+                    </ul>
+                  </Col>
+                </Row>
+                <Divider />
+              </div>
+            ))}
           </div>
         )}
       </div>
